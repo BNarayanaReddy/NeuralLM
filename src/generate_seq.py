@@ -3,7 +3,7 @@ import torch
 from utils import normalize_text
 from tokenizers import Tokenizer
 import os
-
+from config import Config
 # model classes for loading checkpoints
 from model import Encoder, Decoder, Seq2Seq
 
@@ -17,8 +17,7 @@ def get_tokenizer(save_fldr, name = 'bpe'):
 
 
 def build_model(config, ckpt_path, tokenizer_dir):
-    
-    tokenizer = get_tokenizer(os.path.join(tokenizer_dir, 'tokenizer.json'))
+    tokenizer = get_tokenizer(tokenizer_dir)
     # instantiate encoder/decoder/seq2seq using file-level constants
     encoder = Encoder(config.VOCAB_SIZE, config.EMB_DIM, config.ENC_HIDDEN_DIM, config.DROPOUT)
     decoder = Decoder(config.VOCAB_SIZE, config.EMB_DIM, config.ENC_HIDDEN_DIM, config.DEC_HIDDEN_DIM, config.DROPOUT)
@@ -60,10 +59,11 @@ def generate_seq(model, texts, tokenizer, config, gen_len=100):
             for step in range(gen_len):
                 out = model(src, dec_in)          # [1, cur_dec_len, vocab_size]
                 next_token = int(out[0, -1].argmax().cpu().item())  # last timestep prediction
-                generated.append(next_token)
+                
                 
                 if next_token == end:
                     break
+                generated.append(next_token)
 
                 # append predicted token to decoder input for next step
                 dec_in = torch.cat(
@@ -91,9 +91,9 @@ def main():
     parser.add_argument('--config', choices=(1, 2, 3), default=1, type=int, help="Type of config to try")
     parser.add_argument('--gen-len', type=int, default=100, help='Number of tokens to generate')
     args = parser.parse_args()
-
-    model, tknzr = build_model(args.config, args.checkpoint, args.tokenizer_dir)
-    generate_seq(model, args.text, tknzr, args.config, args.gen_len)
+    config = Config(args.config)
+    model, tknzr = build_model(config, args.checkpoint, args.tokenizer_dir)
+    generate_seq(model, args.text, tknzr, config, args.gen_len)
 
 if __name__ == '__main__':
     main()
