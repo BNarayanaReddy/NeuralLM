@@ -1,5 +1,4 @@
 # NeuralLM 
-- `In Progress`
 ## Training Scripts on Kaggle
 
 The complete training notebooks for each configuration are available on Kaggle:
