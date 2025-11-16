@@ -27,6 +27,4 @@ The complete training notebooks for each configuration are available on Kaggle:
 
 ```bash
     tensorboard --logdir events/config1
-    tensorboard --logdir events/config2
-    tensorboard --logdir events/config3
 ```
