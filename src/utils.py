@@ -11,3 +11,8 @@ def normalize_text(text, lowercase = True):
     text = re.sub(r'\b(mr|mrs|ms|dr|st)\.', r'\1', text, flags=re.IGNORECASE) # handle mr. mrs. etc
     text = text.strip()
     return text
+
+def load_txt(txt_file):
+    with open(txt_file, "r", encoding="utf-8") as f:
+        text = f.read()
+    return text
